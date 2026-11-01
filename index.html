@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Chemistry Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; /* slate-950 */
+            color: #f8fafc;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+        }
+
+        /* Neon Glow Text */
+        .neon-text {
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.7), 0 0 20px rgba(56, 189, 248, 0.5), 0 0 40px rgba(56, 189, 248, 0.3);
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px 0 rgba(56, 189, 248, 0.2);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        /* Ambient Background Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: floatOrb 10s infinite ease-in-out alternate;
+        }
+
+        .orb-1 { width: 300px; height: 300px; background: rgba(56, 189, 248, 0.15); top: -100px; left: -100px; }
+        .orb-2 { width: 400px; height: 400px; background: rgba(139, 92, 246, 0.15); bottom: -150px; right: -100px; animation-delay: -5s; }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 1; scale: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(-100px) scale(0.5); opacity: 0; }
+        }
+
+        /* Glowing Button */
+        .glow-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .glow-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .glow-btn:hover::before {
+            left: 100%;
+        }
+        
+        .glow-btn:hover {
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center relative">
+
+    <!-- Background Ambient Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <!-- Particle Container -->
+    <div id="particles" class="absolute inset-0 z-0 overflow-hidden pointer-events-none"></div>
+
+    <!-- Main Content -->
+    <div class="z-10 flex flex-col items-center w-full max-w-4xl px-6">
+        
+        <!-- Header -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-bold text-white tracking-tight mb-4 neon-text">
+                Virtual Chemistry Lab
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl font-light max-w-2xl mx-auto">
+                Interactive simulations for modern science education. Select an experiment below to begin.
+            </p>
+        </div>
+
+        <!-- Experiment Grid (Only one item as requested) -->
+        <div class="w-full max-w-md">
+            
+            <!-- Fractional Distillation Card -->
+            <div class="glass-card rounded-2xl p-8 flex flex-col h-full relative overflow-hidden group">
+                <!-- Decorative Icon -->
+                <div class="w-14 h-14 rounded-xl bg-slate-800/80 border border-slate-600 flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(249,115,22,0.3)] group-hover:shadow-[0_0_20px_rgba(249,115,22,0.6)] transition-shadow">
+                    <svg class="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                    </svg>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-white mb-3 tracking-wide">Fractional Distillation</h2>
+                <p class="text-slate-400 mb-8 flex-grow leading-relaxed">
+                    Explore the separation of crude oil into its valuable fractions based on boiling points. Interactively discover the properties, formulas, and uses of each product in a fully simulated refining tower.
+                </p>
+                
+                <a href="tower.html" class="glow-btn inline-flex items-center justify-center w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                    Start Experiment
+                    <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Particle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const particleContainer = document.getElementById('particles');
+            const particleCount = 30; // Number of floating particles
+
+            for (let i = 0; i < particleCount; i++) {
+                createParticle();
+            }
+
+            function createParticle() {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Randomize properties
+                const size = Math.random() * 4 + 2; // 2px to 6px
+                const posX = Math.random() * 100; // 0% to 100%vw
+                const duration = Math.random() * 10 + 10; // 10s to 20s
+                const delay = Math.random() * 10; // 0s to 10s delay
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}vw`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+
+                // Optionally add glowing colors to some particles
+                if (Math.random() > 0.7) {
+                    particle.style.boxShadow = '0 0 8px 2px rgba(56, 189, 248, 0.6)';
+                    particle.style.backgroundColor = '#bae6fd';
+                }
+
+                particleContainer.appendChild(particle);
+            }
+        });
+    </script>
+</body>
+</html>
