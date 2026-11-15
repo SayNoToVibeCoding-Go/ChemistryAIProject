@@ -3,406 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aqueous Ions Lab</title>
+    <title>Aqueous Ion Colors Experiment</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --liquid-color: rgba(255, 255, 255, 0.05); /* Default Water */
-            --liquid-glow: rgba(255, 255, 255, 0.0);
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #020617; /* slate-950 */
-            color: #f8fafc;
-            overflow: hidden;
-            margin: 0;
-            height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
         }
 
-        /* Neon Glow Text */
-        .neon-text {
-            text-shadow: 0 0 10px rgba(56, 189, 248, 0.7), 0 0 20px rgba(56, 189, 248, 0.5);
+        /* Smooth transition for the liquid in the flask */
+        #liquid {
+            transition: fill 0.8s ease-in-out;
         }
 
-        /* Glassmorphism Card */
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        /* Ambient Background Orbs */
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: -1;
-            transition: background-color 1.5s ease;
-        }
-
-        .orb-main { width: 500px; height: 500px; top: 50%; left: 25%; transform: translate(-50%, -50%); background: var(--liquid-glow); opacity: 0.3; }
-
-        /* FLASK CSS */
         .flask-container {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.1));
         }
 
-        .flask-neck {
-            width: 70px;
-            height: 220px;
-            border: 5px solid rgba(255, 255, 255, 0.5);
-            border-bottom: none;
-            border-radius: 12px 12px 0 0;
-            position: relative;
-            z-index: 10;
-            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.4) 20%, rgba(255,255,255,0.05) 80%, rgba(255,255,255,0.2) 100%);
+        .btn-ion {
+            transition: all 0.2s;
         }
-
-        .flask-body {
-            width: 300px;
-            height: 300px;
-            border: 5px solid rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            margin-top: -20px; /* Overlaps with neck */
-            position: relative;
-            z-index: 5;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 60%, rgba(0,0,0,0.2) 100%);
-            box-shadow: inset -15px -15px 30px rgba(0,0,0,0.4), inset 10px 10px 20px rgba(255,255,255,0.2);
-            overflow: hidden; /* Clips the liquid perfectly to the circle */
-            display: flex;
-            align-items: flex-end;
-        }
-
-        .graduation-mark {
-            position: absolute;
-            top: 80px;
-            left: -15px;
-            right: -15px;
-            height: 3px;
-            background: rgba(255,255,255,0.8);
-            border-radius: 2px;
-            z-index: 20;
-            box-shadow: 0 0 5px rgba(255,255,255,0.5);
-        }
-
-        .graduation-text {
-            position: absolute;
-            top: 65px;
-            right: -60px;
-            color: rgba(255,255,255,0.7);
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        /* LIQUID CSS */
-        .liquid-neck {
-            position: absolute;
-            bottom: -5px; /* Overlaps seamlessly into body */
-            left: 0;
-            width: 100%;
-            height: calc(100% - 80px); /* Fills up to graduation mark */
-            background-color: var(--liquid-color);
-            box-shadow: 0 0 40px var(--liquid-glow);
-            transition: background-color 1.5s ease, box-shadow 1.5s ease;
-            z-index: 1;
-        }
-
-        /* Top surface of the liquid in the neck */
-        .liquid-surface {
-            position: absolute;
-            top: -5px;
-            left: 0;
-            width: 100%;
-            height: 10px;
-            background-color: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: inset 0 0 10px var(--liquid-glow);
-            transition: all 1.5s ease;
-            animation: wave 3s infinite ease-in-out alternate;
-        }
-
-        .liquid-body {
-            width: 100%;
-            height: 100%; /* Fully filled circle */
-            background-color: var(--liquid-color);
-            box-shadow: inset 0 -20px 50px var(--liquid-glow), 0 0 50px var(--liquid-glow);
-            transition: background-color 1.5s ease, box-shadow 1.5s ease;
-            position: relative;
-        }
-
-        @keyframes wave {
-            0% { transform: scaleY(0.8) translateY(2px); }
-            100% { transform: scaleY(1.2) translateY(-2px); }
-        }
-
-        /* Bubbles Animation */
-        .bubble {
-            position: absolute;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            animation: floatUp infinite ease-in;
-            pointer-events: none;
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(0.5); opacity: 0; }
-            20% { opacity: 1; scale: 1; }
-            80% { opacity: 1; }
-            100% { transform: translateY(-300px) scale(1.5); opacity: 0; }
-        }
-
-        /* Interactive Buttons */
-        .ion-btn {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        .ion-btn:hover {
-            background: rgba(56, 189, 248, 0.1);
-            border-color: rgba(56, 189, 248, 0.4);
+        
+        .btn-ion:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        .ion-btn.active {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: currentColor;
-            box-shadow: 0 0 15px currentColor, inset 0 0 10px currentColor;
+
+        .btn-ion:active {
+            transform: translateY(0);
+        }
+
+        /* Hide elements utility */
+        .hidden-section {
+            display: none !important;
         }
     </style>
 </head>
-<body class="relative text-slate-200">
+<body class="min-h-screen flex flex-col">
 
-    <!-- Ambient Glow -->
-    <div class="orb orb-main" id="ambient-orb"></div>
+    <!-- Top Bar -->
+    <header class="bg-white shadow-sm px-6 py-4 flex items-center justify-between border-b border-slate-200">
+        <h1 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+            Ion Color Lab
+        </h1>
+        <a href="index.html" class="inline-flex items-center px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-sm font-medium rounded-lg transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Return to Home Page
+        </a>
+    </header>
 
-    <!-- Return to Menu Button -->
-    <a href="index.html" class="fixed top-6 left-6 z-50 flex items-center gap-2 px-5 py-2.5 bg-slate-800/60 backdrop-blur-md border border-cyan-500/30 rounded-xl text-cyan-400 font-semibold hover:bg-cyan-900/40 hover:border-cyan-400 hover:shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all duration-300 cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Return to Menu
-    </a>
-
-    <!-- Main Layout -->
-    <div class="flex flex-col lg:flex-row h-full w-full max-w-7xl mx-auto items-center justify-center p-6 gap-12 pt-24 lg:pt-0">
+    <main class="flex-grow flex flex-col items-center p-6 w-full max-w-6xl mx-auto">
         
-        <!-- Left Side: Visual Apparatus (Flask) -->
-        <div class="flex-1 flex justify-center items-center w-full min-h-[500px]">
-            <div class="flask-container">
-                <!-- Neck -->
-                <div class="flask-neck">
-                    <div class="graduation-mark"></div>
-                    <div class="graduation-text">250 ml</div>
-                    <div class="liquid-neck">
-                        <div class="liquid-surface"></div>
+        <!-- EXPERIMENT SECTION -->
+        <div id="experiment-section" class="w-full flex flex-col items-center animate-fade-in">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-extrabold text-slate-800 mb-3">Transition Metal Ions in Aqueous Solution</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">Select an ion to add to the water and observe the characteristic color change of the resulting aqueous complex.</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-12 items-center w-full justify-center mb-10">
+                
+                <!-- Flask Visual -->
+                <div class="relative flask-container bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center w-full md:w-1/3">
+                    <svg width="200" height="250" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Liquid shape (changes color) -->
+                        <path id="liquid" d="M70,120 L50,180 A 50 50 0 0 0 150 180 L130,120 Z" fill="#e0f2fe" />
+                        <!-- Liquid Top Surface -->
+                        <ellipse id="liquid-surface" cx="100" cy="120" rx="30" ry="8" fill="rgba(255,255,255,0.3)" />
+                        
+                        <!-- Flask Outline (Glass) -->
+                        <path d="M85,20 L85,90 L40,200 A 65 65 0 0 0 160 200 L115,90 L115,20 Z" fill="none" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="75" y1="20" x2="125" y2="20" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round"/>
+                        
+                        <!-- Measurement lines -->
+                        <line x1="80" y1="130" x2="95" y2="130" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="70" y1="160" x2="90" y2="160" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
+                        
+                        <!-- Glass reflection -->
+                        <path d="M145,190 A 50 50 0 0 0 110,100" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+
+                    <div class="mt-6 text-center h-16">
+                        <p class="text-sm font-semibold text-slate-400 uppercase tracking-wide">Current Ion</p>
+                        <p id="current-ion-display" class="text-2xl font-bold text-slate-800">Water (H₂O)</p>
                     </div>
                 </div>
-                <!-- Body -->
-                <div class="flask-body">
-                    <div class="liquid-body" id="liquid-body">
-                        <!-- Bubbles will be injected here -->
-                    </div>
+
+                <!-- Ion Controls -->
+                <div class="w-full md:w-2/3 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <!-- Buttons will be injected here via JS -->
+                    <div id="ion-buttons-container" class="contents"></div>
+                </div>
+            </div>
+
+            <!-- Action to go to Test -->
+            <button onclick="startTest()" class="mt-4 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all hover:-translate-y-1 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                Test Your Knowledge
+            </button>
+        </div>
+
+        <!-- TEST SECTION -->
+        <div id="test-section" class="w-full max-w-3xl flex-col items-center hidden-section animate-fade-in mt-8">
+            <div class="w-full flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Knowledge Check</h2>
+                <button onclick="endTest()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Experiment
+                </button>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 w-full text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-indigo-100">
+                    <div id="test-progress" class="h-full bg-indigo-600 w-0 transition-all duration-300"></div>
+                </div>
+
+                <h3 class="text-xl md:text-2xl font-medium text-slate-700 mt-4 mb-8 leading-relaxed">
+                    What is going to be the colour change if <br>
+                    <span id="question-ion" class="text-3xl font-extrabold text-indigo-700 block mt-3"></span>
+                    <span class="text-lg">is added?</span>
+                </h3>
+
+                <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                    <!-- Options injected here -->
+                </div>
+
+                <div id="feedback-container" class="hidden-section flex flex-col items-center justify-center p-4 rounded-xl mb-4">
+                    <p id="feedback-text" class="text-xl font-bold mb-4"></p>
+                    <button onclick="nextQuestion()" class="px-6 py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg transition-colors">
+                        Next Question
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Right Side: Controls and Information -->
-        <div class="flex-1 flex flex-col gap-6 w-full max-w-lg z-10">
-            
-            <!-- Title -->
-            <div>
-                <h1 class="text-4xl font-bold text-white tracking-tight mb-2 neon-text">Aqueous Ions Lab</h1>
-                <p class="text-slate-400 text-sm">Select an ion to observe its characteristic color in an aqueous solution.</p>
-            </div>
+    </main>
 
-            <!-- Ion Selection Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <button class="ion-btn rounded-lg py-3 px-4 font-semibold text-blue-400" data-ion="cu">Cu²⁺</button>
-                <button class="ion-btn rounded-lg py-3 px-4 font-semibold text-green-300" data-ion="fe2">Fe²⁺</button>
-                <button class="ion-btn rounded-lg py-3 px-4 font-semibold text-yellow-600" data-ion="fe3">Fe³⁺</button>
-                <button class="ion-btn rounded-lg py-3 px-4 font-semibold text-pink-400" data-ion="co2">Co²⁺</button>
-                <button class="ion-btn rounded-lg py-3 px-4 font-semibold text-green-500" data-ion="ni2">Ni²⁺</button>
-                <button class="ion-btn rounded-lg py-3 px-4 font-semibold text-yellow-400" data-ion="cro4">CrO₄²⁻</button>
-                <button class="ion-btn rounded-lg py-3 px-4 font-semibold text-orange-500" data-ion="cr2o7">Cr₂O₇²⁻</button>
-                <button class="ion-btn rounded-lg py-3 px-4 font-semibold text-pink-200" data-ion="mn2">Mn²⁺</button>
-                <button class="ion-btn rounded-lg py-3 px-4 font-semibold text-purple-500" data-ion="mno4">MnO₄⁻</button>
-            </div>
-
-            <!-- Information Panel -->
-            <div class="glass-panel rounded-2xl p-6 mt-4 min-h-[220px] flex flex-col justify-center transition-all duration-500" id="info-panel">
-                <div id="default-info" class="text-center text-slate-400">
-                    <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                    <p>Awaiting ion selection...</p>
-                </div>
-
-                <div id="active-info" class="hidden h-full flex-col justify-between">
-                    <div>
-                        <div class="flex items-end gap-3 mb-2">
-                            <h2 id="ion-formula" class="text-4xl font-bold text-white tracking-wide"></h2>
-                            <span id="ion-name" class="text-xl text-slate-300 font-light mb-1"></span>
-                        </div>
-                        <div class="h-px w-full bg-white/10 my-4"></div>
-                        <p id="ion-desc" class="text-slate-300 leading-relaxed text-sm"></p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- JavaScript Logic -->
     <script>
-        // Database of Colored Ions
-        const ionsData = {
-            'cu': { 
-                name: 'Copper(II)', 
-                formula: 'Cu²⁺(aq)', 
-                color: 'rgba(59, 130, 246, 0.85)', 
-                glow: 'rgba(59, 130, 246, 0.6)', 
-                desc: 'Forms a distinctive pale to deep blue solution. In an aqueous environment, it typically exists as the octahedral hexaaquacopper(II) complex, [Cu(H₂O)₆]²⁺.' 
-            },
-            'fe2': { 
-                name: 'Iron(II)', 
-                formula: 'Fe²⁺(aq)', 
-                color: 'rgba(134, 239, 172, 0.85)', 
-                glow: 'rgba(134, 239, 172, 0.5)', 
-                desc: 'Produces a very pale green solution consisting of the hexaaquairon(II) complex. It is susceptible to oxidation by oxygen in the air, slowly turning yellow-brown.' 
-            },
-            'fe3': { 
-                name: 'Iron(III)', 
-                formula: 'Fe³⁺(aq)', 
-                color: 'rgba(234, 179, 8, 0.85)', 
-                glow: 'rgba(234, 179, 8, 0.6)', 
-                desc: 'Although the pure [Fe(H₂O)₆]³⁺ complex is pale violet, aqueous solutions typically appear yellow to brown due to hydrolysis and the formation of hydroxo complexes.' 
-            },
-            'co2': { 
-                name: 'Cobalt(II)', 
-                formula: 'Co²⁺(aq)', 
-                color: 'rgba(244, 114, 182, 0.85)', 
-                glow: 'rgba(244, 114, 182, 0.6)', 
-                desc: 'Forms a characteristic pink solution consisting of the octahedral hexaaquacobalt(II) complex, [Co(H₂O)₆]²⁺. It can turn blue when forming tetrahedral complexes.' 
-            },
-            'ni2': { 
-                name: 'Nickel(II)', 
-                formula: 'Ni²⁺(aq)', 
-                color: 'rgba(34, 197, 94, 0.85)', 
-                glow: 'rgba(34, 197, 94, 0.5)', 
-                desc: 'Presents a bright emerald green color in aqueous solution, existing primarily as the hexaaquanickel(II) complex, [Ni(H₂O)₆]²⁺.' 
-            },
-            'cro4': {
-                name: 'Chromate(VI)',
-                formula: 'CrO₄²⁻(aq)',
-                color: 'rgba(250, 204, 21, 0.85)',
-                glow: 'rgba(250, 204, 21, 0.6)',
-                desc: 'A strong oxidizing agent that displays a bright yellow color in alkaline or neutral solutions. In acidic conditions, it converts into the orange dichromate(VI) ion.'
-            },
-            'cr2o7': { 
-                name: 'Dichromate(VI)', 
-                formula: 'Cr₂O₇²⁻(aq)', 
-                color: 'rgba(249, 115, 22, 0.85)', 
-                glow: 'rgba(249, 115, 22, 0.6)', 
-                desc: 'A powerful oxidizing agent that presents a vivid orange color in acidic solutions. In alkaline conditions, it converts to the yellow chromate(VI) ion (CrO₄²⁻).' 
-            },
-            'mn2': {
-                name: 'Manganese(II)',
-                formula: 'Mn²⁺(aq)',
-                color: 'rgba(251, 207, 232, 0.85)',
-                glow: 'rgba(251, 207, 232, 0.5)',
-                desc: 'Yields a very pale, almost colorless pink solution. It exists primarily as the hexaaquamanganese(II) complex, [Mn(H₂O)₆]²⁺, which has a very faint color.'
-            },
-            'mno4': { 
-                name: 'Permanganate(VII)', 
-                formula: 'MnO₄⁻(aq)', 
-                color: 'rgba(168, 85, 247, 0.85)', 
-                glow: 'rgba(168, 85, 247, 0.6)', 
-                desc: 'An intensely purple or violet solution. It is a very strong and widely used oxidizing agent in redox titrations, reducing to colorless Mn²⁺ in acidic conditions.' 
-            }
-        };
+        // Data Structure for Ions
+        const ionsData = [
+            { id: 'co2', name: 'Cobalt(II)', formula: 'Co<sup>2+</sup>', colorName: 'pink-red', hex: '#fb7185' },
+            { id: 'fe3', name: 'Iron(III)', formula: 'Fe<sup>3+</sup>', colorName: 'yellow', hex: '#fcd34d' },
+            { id: 'cro4', name: 'Chromate', formula: 'CrO<sub>4</sub><sup>2-</sup>', colorName: 'yellow', hex: '#fbbf24' },
+            { id: 'cr2o7', name: 'Dichromate', formula: 'Cr<sub>2</sub>O<sub>7</sub><sup>2-</sup>', colorName: 'orange', hex: '#f97316' },
+            { id: 'fe2', name: 'Iron(II)', formula: 'Fe<sup>2+</sup>', colorName: 'pale green', hex: '#86efac' },
+            { id: 'ni2', name: 'Nickel(II)', formula: 'Ni<sup>2+</sup>', colorName: 'green', hex: '#22c55e' },
+            { id: 'cr3', name: 'Chromium(III)', formula: 'Cr<sup>3+</sup>', colorName: 'green', hex: '#16a34a' },
+            { id: 'cu2', name: 'Copper(II)', formula: 'Cu<sup>2+</sup>', colorName: 'blue', hex: '#3b82f6' },
+            { id: 'mno4', name: 'Permanganate', formula: 'MnO<sub>4</sub><sup>-</sup>', colorName: 'purple-violet', hex: '#9333ea' },
+            { id: 'ti3', name: 'Titanium(III)', formula: 'Ti<sup>3+</sup>', colorName: 'purple-violet', hex: '#a855f7' }
+        ];
 
-        // DOM Elements
-        const root = document.documentElement;
-        const buttons = document.querySelectorAll('.ion-btn');
-        const defaultInfo = document.getElementById('default-info');
-        const activeInfo = document.getElementById('active-info');
-        const ionFormula = document.getElementById('ion-formula');
-        const ionName = document.getElementById('ion-name');
-        const ionDesc = document.getElementById('ion-desc');
-        const infoPanel = document.getElementById('info-panel');
-        const liquidBody = document.getElementById('liquid-body');
+        const uniqueColors = [...new Set(ionsData.map(ion => ion.colorName))];
 
-        // Bubble Animation Logic
-        function createBubble() {
-            const bubble = document.createElement('div');
-            bubble.classList.add('bubble');
-            
-            // Random properties
-            const size = Math.random() * 8 + 2; // 2px to 10px
-            const left = Math.random() * 80 + 10; // 10% to 90% across the body
-            const duration = Math.random() * 3 + 2; // 2s to 5s animation
-            
-            bubble.style.width = `${size}px`;
-            bubble.style.height = `${size}px`;
-            bubble.style.left = `${left}%`;
-            bubble.style.animationDuration = `${duration}s`;
+        // --- EXPERIMENT LOGIC ---
+        const buttonsContainer = document.getElementById('ion-buttons-container');
+        const liquidPath = document.getElementById('liquid');
+        const liquidSurface = document.getElementById('liquid-surface');
+        const currentIonDisplay = document.getElementById('current-ion-display');
 
-            liquidBody.appendChild(bubble);
+        function initExperiment() {
+            ionsData.forEach(ion => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-ion bg-white border border-slate-200 hover:border-indigo-300 rounded-xl p-4 text-center flex flex-col items-center justify-center gap-1 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2';
+                btn.innerHTML = `
+                    <span class="text-sm text-slate-500 font-medium">${ion.name}</span>
+                    <span class="text-lg font-bold text-slate-800">${ion.formula}</span>
+                `;
+                btn.onclick = () => updateFlask(ion);
+                buttonsContainer.appendChild(btn);
+            });
 
-            // Remove bubble after animation ends
-            setTimeout(() => {
-                bubble.remove();
-            }, duration * 1000);
+            // Add a reset/water button
+            const resetBtn = document.createElement('button');
+            resetBtn.className = 'btn-ion bg-slate-50 border border-slate-200 hover:border-blue-300 rounded-xl p-4 text-center flex flex-col items-center justify-center gap-1 focus:outline-none focus:ring-2 focus:ring-blue-500 col-span-full sm:col-span-1';
+            resetBtn.innerHTML = `
+                <span class="text-sm text-slate-500 font-medium">Reset</span>
+                <span class="text-lg font-bold text-slate-800">Water</span>
+            `;
+            resetBtn.onclick = () => {
+                liquidPath.setAttribute('fill', '#e0f2fe');
+                currentIonDisplay.innerHTML = 'Water (H₂O)';
+            };
+            buttonsContainer.appendChild(resetBtn);
         }
 
-        // Start creating bubbles periodically
-        setInterval(createBubble, 300);
+        function updateFlask(ion) {
+            liquidPath.setAttribute('fill', ion.hex);
+            currentIonDisplay.innerHTML = `${ion.name} (${ion.formula})`;
+        }
 
-        // Interaction Logic
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const ionId = btn.getAttribute('data-ion');
-                const data = ionsData[ionId];
+        // --- TEST LOGIC ---
+        const expSection = document.getElementById('experiment-section');
+        const testSection = document.getElementById('test-section');
+        const questionIonEl = document.getElementById('question-ion');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackText = document.getElementById('feedback-text');
+        
+        let currentQuestionIon = null;
+        let score = 0;
+        let questionsAsked = 0;
 
-                // Update UI Buttons
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+        function startTest() {
+            expSection.classList.add('hidden-section');
+            testSection.classList.remove('hidden-section');
+            testSection.classList.add('flex');
+            score = 0;
+            questionsAsked = 0;
+            document.getElementById('test-progress').style.width = '0%';
+            nextQuestion();
+        }
 
-                // Update CSS Variables for Liquid Color Transition
-                root.style.setProperty('--liquid-color', data.color);
-                root.style.setProperty('--liquid-glow', data.glow);
+        function endTest() {
+            testSection.classList.add('hidden-section');
+            testSection.classList.remove('flex');
+            expSection.classList.remove('hidden-section');
+        }
 
-                // Update Information Panel
-                defaultInfo.classList.add('hidden');
-                activeInfo.classList.remove('hidden');
-                
-                // Add a quick fade effect to the panel text
-                activeInfo.style.opacity = 0;
-                setTimeout(() => {
-                    ionFormula.textContent = data.formula;
-                    ionFormula.style.color = data.color;
-                    ionFormula.style.textShadow = `0 0 15px ${data.glow}`;
-                    
-                    ionName.textContent = data.name;
-                    ionDesc.textContent = data.desc;
-                    
-                    activeInfo.style.transition = 'opacity 0.5s ease';
-                    activeInfo.style.opacity = 1;
-                }, 150);
-                
-                // Add a subtle border glow to the panel matching the ion
-                infoPanel.style.borderColor = data.glow;
-                infoPanel.style.boxShadow = `0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 0 20px ${data.glow}`;
+        function nextQuestion() {
+            // Reset UI
+            feedbackContainer.classList.add('hidden-section');
+            optionsContainer.classList.remove('hidden-section');
+            optionsContainer.innerHTML = '';
+
+            // Pick a random ion
+            currentQuestionIon = ionsData[Math.floor(Math.random() * ionsData.length)];
+            
+            // Set question text
+            questionIonEl.innerHTML = `${currentQuestionIon.name} (${currentQuestionIon.formula})`;
+
+            // Generate Options (1 correct, 3 random wrong)
+            const correctAnswer = currentQuestionIon.colorName;
+            let options = [correctAnswer];
+            
+            let availableWrong = uniqueColors.filter(c => c !== correctAnswer);
+            // Shuffle and pick 3
+            availableWrong.sort(() => 0.5 - Math.random());
+            options.push(availableWrong[0], availableWrong[1], availableWrong[2]);
+            
+            // Shuffle final options
+            options.sort(() => 0.5 - Math.random());
+
+            // Create buttons
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'py-4 px-6 border-2 border-slate-200 rounded-xl text-lg font-bold text-slate-700 hover:border-indigo-400 hover:bg-indigo-50 transition-colors focus:outline-none capitalize';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt, btn);
+                optionsContainer.appendChild(btn);
             });
-        });
+        }
+
+        function checkAnswer(selectedColor, btnElement) {
+            // Disable all buttons
+            const allBtns = optionsContainer.querySelectorAll('button');
+            allBtns.forEach(b => {
+                b.disabled = true;
+                b.classList.remove('hover:border-indigo-400', 'hover:bg-indigo-50');
+            });
+
+            questionsAsked++;
+            document.getElementById('test-progress').style.width = `${Math.min((questionsAsked / 10) * 100, 100)}%`;
+
+            optionsContainer.classList.add('hidden-section');
+            feedbackContainer.classList.remove('hidden-section');
+
+            if (selectedColor === currentQuestionIon.colorName) {
+                // Correct
+                score++;
+                feedbackContainer.className = 'flex flex-col items-center justify-center p-8 rounded-xl mb-4 bg-green-50 border border-green-200 w-full';
+                feedbackText.innerHTML = `
+                    <span class="text-green-600 block text-2xl mb-2">✓ Correct!</span>
+                    <span class="text-slate-700 text-base font-normal">${currentQuestionIon.name} turns the solution <strong class="capitalize">${currentQuestionIon.colorName}</strong>.</span>
+                `;
+            } else {
+                // Wrong
+                feedbackContainer.className = 'flex flex-col items-center justify-center p-8 rounded-xl mb-4 bg-red-50 border border-red-200 w-full';
+                feedbackText.innerHTML = `
+                    <span class="text-red-600 block text-2xl mb-2">✗ Incorrect</span>
+                    <span class="text-slate-700 text-base font-normal">You chose <em>${selectedColor}</em>. <br>The correct color for ${currentQuestionIon.name} is <strong class="capitalize">${currentQuestionIon.colorName}</strong>.</span>
+                `;
+            }
+        }
+
+        // Initialize on load
+        window.onload = initExperiment;
 
     </script>
 </body>
